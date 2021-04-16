@@ -1,17 +1,13 @@
 import React, { useEffect } from "react";
-import { useSocket } from "use-socketio";
-import { GameStartedSocketEvent } from "../../../types/sockets.types";
+import { useSocket, useLastMessage } from "use-socketio";
 import { useGameContextConsumer } from "../../context/GameContext";
-import { useLastMessage } from "../../context/MockSocket";
 import QuestionController from "../QuestionController";
 import RegisterParticipant from "../RegisterParticipant";
 import WaitingRoom from "../WaitingRoom";
 
 const GameController = () => {
   const { state, setState } = useGameContextConsumer();
-  const { data: gameStartedResponse } = useLastMessage<GameStartedSocketEvent>(
-    "GameStarted"
-  );
+  const { data: gameStartedResponse } = useLastMessage("GameStarted");
 
   useSocket("ParticipantsUpdated", () => {
     console.log("ParticipantsUpdated!");

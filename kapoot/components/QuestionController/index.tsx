@@ -7,7 +7,11 @@ const QuestionController: FC = () => {
     "NewQuestion"
   );
 
-  return <div>question controller {JSON.stringify(newQuestionResponse)}</div>;
+  return (
+    <div>
+      (GAME STARTED!) question controller {JSON.stringify(newQuestionResponse)}
+    </div>
+  );
 };
 
 export default QuestionController;

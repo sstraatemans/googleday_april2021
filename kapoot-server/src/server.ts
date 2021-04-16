@@ -2,7 +2,7 @@ import * as express from "express";
 import * as socketio from "socket.io";
 import * as path from "path";
 import { Socket } from "socket.io";
-import { NewQuestionSocketEvent, RegisterParticipantSocketEvent } from "../../types/sockets.types";
+import { NewQuestionSocketEvent, RegisterParticipantSocketEvent, StartGameSocketEvent, UpdateParticipantsSocketEvent } from "../../types/sockets.types";
 import { onSocketEvent } from "./handleSocketEvent";
 interface KapootSocket extends Socket {
   name?: string;
@@ -57,7 +57,6 @@ io.on("connection", (socket: KapootSocket) => {
       participants.push(name);
       socket.name = name;
       success = true;
-      io.emit("ParticipantsUpdated", { participants });
     }
 
     socket.emit("ParticipantRegistered", {
@@ -65,11 +64,21 @@ io.on("connection", (socket: KapootSocket) => {
     });
   });
 
-  socket.on("GameStarted", () => {
-    console.log("Game has started", participants);
+  onSocketEvent<UpdateParticipantsSocketEvent>(socket, "UpdateParticipants", () => {
+    io.emit("ParticipantsUpdated", { participants });
+  });
+
+  onSocketEvent<StartGameSocketEvent>(socket, "StartGame", () => {
+    if (isGameStarted) {
+      return;
+    }
+
     isGameStarted = true;
-    console.log("questions", questions);
-    io.emit("NewQuestion", questions[0]);
+
+    setTimeout(() => {
+      console.log("questions", questions);
+      io.emit("NewQuestion", questions[0]);
+    }, 3000);
   });
 });
 

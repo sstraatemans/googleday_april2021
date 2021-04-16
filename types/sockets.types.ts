@@ -6,6 +6,12 @@ export interface ParticipantsUpdatedSocketEvent {
   };
 }
 
+export interface UpdateParticipantsSocketEvent {
+  eventName: "UpdateParticipants";
+  body: null;
+  response: null;
+}
+
 export interface ParticipantRegisteredSocketEvent {
   eventName: "ParticipantRegistered";
   body: null;
@@ -78,6 +84,7 @@ export type SocketEvent =
   | ParticipantsUpdatedSocketEvent
   | ParticipantRegisteredSocketEvent
   | RegisterParticipantSocketEvent
+  | UpdateParticipantsSocketEvent
   | NewQuestionSocketEvent
   | GameStartedSocketEvent
   | StartGameSocketEvent

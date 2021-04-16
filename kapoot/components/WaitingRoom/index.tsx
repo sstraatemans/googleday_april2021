@@ -1,11 +1,19 @@
-import React, { FC } from "react";
-import { ParticipantsUpdatedSocketEvent } from "../../../types/sockets.types";
-import { useLastMessage } from "../../context/MockSocket";
+import React, { FC, useEffect } from "react";
+import { useSocket, useLastMessage } from "use-socketio";
+import { UpdateParticipantsSocketEvent } from "../../../types/sockets.types";
+import { socketEmit } from "../../utils/socketEmit";
 
 const WaitingRoom: FC = () => {
-  const {
-    data: participantResponse,
-  } = useLastMessage<ParticipantsUpdatedSocketEvent>("ParticipantsUpdated");
+  const { socket } = useSocket();
+  const { data: participantResponse } = useLastMessage("ParticipantsUpdated");
+
+  useEffect(() => {
+    socketEmit<UpdateParticipantsSocketEvent>(
+      socket,
+      "UpdateParticipants",
+      null
+    );
+  }, []);
 
   return <div>Waiting room {JSON.stringify(participantResponse)}</div>;
 };

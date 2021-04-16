@@ -24,7 +24,7 @@
       }
 
       const startGame = () => {
-        socket.emit("GameStarted")
+        socket.emit("StartGame")
       }
 
       socket.on("ParticipantRegistered", function ({success}) {
