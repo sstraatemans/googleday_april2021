@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSocket } from "use-socketio";
-import { PartipantRegisteredSocketEvent } from "../../../types/sockets.types";
+import { ParticipantRegisteredSocketEvent } from "../../../types/sockets.types";
 import { useGameContextConsumer } from "../../context/GameContext";
 import { useLastMessage } from "../../context/MockSocket";
 
@@ -12,18 +12,18 @@ const RegisterParticipant = () => {
 
   const {
     data: participantRegisteredResponse,
-  } = useLastMessage<PartipantRegisteredSocketEvent>("PartipantRegistered");
+  } = useLastMessage<ParticipantRegisteredSocketEvent>("ParticipantRegistered");
 
   useEffect(() => {
     if (participantRegisteredResponse) {
       if (participantRegisteredResponse.success) {
-        console.log("PartipantRegistered->success");
+        console.log("ParticipantRegistered->success");
         setState({
           registered: true,
           name: "asd",
         });
       } else {
-        console.log("PartipantRegistered->failed");
+        console.log("ParticipantRegistered->failed");
         setError("Register failed, choose a different name!");
       }
     }

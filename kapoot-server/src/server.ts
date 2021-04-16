@@ -2,7 +2,8 @@ import * as express from "express";
 import * as socketio from "socket.io";
 import * as path from "path";
 import { Socket } from "socket.io";
-import { NewQuestionSocketEvent } from "../../types/sockets.types";
+import { NewQuestionSocketEvent, RegisterParticipantSocketEvent } from "../../types/sockets.types";
+import { onSocketEvent } from "./handleSocketEvent";
 interface KapootSocket extends Socket {
   name?: string;
 }
@@ -49,13 +50,13 @@ io.on("connection", (socket: KapootSocket) => {
     console.log(event, args);
   });
 
-  socket.on("RegisterParticipant", (participant: string) => {
+  onSocketEvent<RegisterParticipantSocketEvent>(socket, "RegisterParticipant", ({ name }) => {
     let success: boolean = false;
-    console.log("isGameStarted", isGameStarted);
+    console.log("[RegisterParticipant]", name);
 
-    if (!isGameStarted && participants.indexOf(participant) == -1) {
-      participants.push(participant);
-      socket.name = participant;
+    if (!isGameStarted && participants.indexOf(name) == -1) {
+      participants.push(name);
+      socket.name = name;
       success = true;
       io.emit("ParticipantsUpdated", { participants });
     }
