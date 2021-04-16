@@ -1,22 +1,29 @@
-import React from "react";
-import { useGameContextConsumer } from "../../context/GameContext";
-import {
-  ParticipantsUpdatedSocketEvent,
-  useLastMessage,
-} from "../../context/MockSocket";
-import RegisterParticipant from "../RegisterParticipant";
+import React, { useEffect } from 'react';
+import { useGameContextConsumer } from '../../context/GameContext';
+import { GameStartedSocketEvent, useLastMessage } from '../../context/MockSocket';
+import QuestionController from '../QuestionController';
+import RegisterParticipant from '../RegisterParticipant';
+import WaitingRoom from '../WaitingRoom';
 
 const GameController = () => {
-  const { state } = useGameContextConsumer();
-  const { participants } = useLastMessage<ParticipantsUpdatedSocketEvent>(
-    "ParticipantsUpdated"
-  );
+  const { state, setState } = useGameContextConsumer();
+  const { data: gameStartedResponse } = useLastMessage<GameStartedSocketEvent>('GameStarted');
+
+  useEffect(() => {
+    if (gameStartedResponse) {
+      setState({ gameStarted: true });
+    }
+  }, [gameStartedResponse]);
 
   if (!state.registered) {
     return <RegisterParticipant />;
   }
 
-  return <div>let the game begin! {JSON.stringify(participants)}</div>;
+  if (!state.gameStarted) {
+    return <WaitingRoom />;
+  }
+
+  return <QuestionController />;
 };
 
 export default GameController;

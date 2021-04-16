@@ -1,13 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState } from 'react';
 
 interface GameState {
   registered: boolean;
+  gameStarted: boolean;
   name: string;
   currentScore: number;
 }
 
 export const INITIAL_GAME_STATE = {
   registered: false,
+  gameStarted: false,
   name: null,
   currentScore: 0,
 };
@@ -28,8 +30,7 @@ export const GameContextProvider: React.FC<{
     <GameContext.Provider
       value={{
         state,
-        setState: (newState: Partial<GameState>) =>
-          setState({ ...state, ...newState }),
+        setState: (newState: Partial<GameState>) => setState({ ...state, ...newState }),
       }}
     >
       {children}
