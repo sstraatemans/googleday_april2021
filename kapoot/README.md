@@ -1,34 +1,118 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Client
 
-## Getting Started
+client-server-url/[slug] (die connect naar server/slug)
+scherm 1: 'geef naam op' en join
+scherm 2: 'wacht scherm, clients (\*tot start)"
 
-First, run the development server:
+scherm 3:ontvang vraag/antwoorden
+scherm 4: na antwoord gegeven
+scherm 4b: wachtscherm voor volgende vraag (tussenstand)
 
-```bash
-npm run dev
-# or
-yarn dev
+scherm 3...
+
+tot. alle vragen zijn geweest
+wachtscherm 4b (zonder vervolg vraag komend) - "zonder tussenstand"
+
+scherm5: resultaatscherm
+
+# Communicatie
+
+1[client->server] register-client (name: string)
+name: RegisterParticipant
+
+1b[client<-server] participants-updated
+name: PartipantsUpdated
+
+```
+{
+  participants: string[]
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2[client<-server] game start
+name: GameStarted
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+3[client<-server] new question
+name: NewQuestion
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+```
+{
+  question: string;
+  answers: {
+    id: string;
+    displayValue: string;
+  }[]
+}
+```
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+4[client->server] answer
+name: GiveAnswer
+{ id: string; participantName: string }
 
-## Learn More
+5[client<-server] all questions received
+name: QuestionCompleted
 
-To learn more about Next.js, take a look at the following resources:
+```
+{
+  questionId: string
+  validAnswerIds: string[]
+  participants: {
+    name: string;
+    score: number;
+  }[]
+}
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3[client<-server] new question (again, until no more questions)
+name: NewQuestion
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+...
 
-## Deploy on Vercel
+# Server
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+"database"
+"een game"
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```
+
+{
+slug: 'hoofdsteden-in-de-wereld'
+name: "Hoofdsteden in de wereld",
+questions: [{
+id: 'vraag1',
+question: "Wat is de hoofdstand van Spanje?",
+answers: [
+{ id: "antwoord1", displayValue: "Lissabon", validAnswer: false }
+{ id: "antwoord2", displayValue: "Madrid", validAnswer: true }
+{ id: "antwoord3", displayValue: "Parijs", validAnswer: false }
+{ id: "antwoord4", displayValue: "Rome", validAnswer: false }
+]
+}]
+}
+
+```
+
+## status
+
+waiting for clients
+
+## actie
+
+"clients geaccepteerd, start game"
+
+## send
+
+vraag+antwoorden
+probeer dit te doen (anders alleen tijd, bijv 20sec)
+
+## volgende status
+
+await alle clients, of timer
+
+wachtscherm voor volgende (live tussenstand)
+
+...etc
+
+```
+
+```
