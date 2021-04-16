@@ -7,6 +7,7 @@ import {
 } from '../../../types/sockets.types';
 import { socketEmit } from '../../utils/socketEmit';
 import { useLastMessage } from '../../utils/useLastMessage';
+import Answer from '../Answer';
 
 interface IQuestion {}
 
@@ -21,7 +22,6 @@ const QuestionController: FC = () => {
 
   const answerQuestion = (id: string) => {
     setAnswerGiven(id);
-
     socketEmit<GiveAnswerSocketEvent>(socket, 'GiveAnswer', { answerId: answerGiven });
   };
 
@@ -31,13 +31,13 @@ const QuestionController: FC = () => {
       <h1>{question.question}</h1>
 
       {question.answers.map((answer) => (
-        <button
-          style={{ backgroundColor: answer.id === answerGiven ? 'green' : 'grey' }}
-          type='button'
-          onClick={() => answerQuestion(answer.id)}
-        >
-          {answer.displayValue}
-        </button>
+        <Answer
+          id={answer.id}
+          label={answer.displayValue}
+          key={answer.id}
+          answerGiven={answer.id === answerGiven}
+          onClick={answerQuestion}
+        />
       ))}
     </div>
   );
