@@ -2,8 +2,25 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  font-family: "Varela Round", Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
+    Droid Sans, Helvetica Neue, sans-serif;
+}
+
+body {
+  background-color: #6659d9;
+}
+
+h1,
+p,
+span,
+div {
+  color: #fff;
+}
+
+input,
+button {
+  font-family: "Varela Round", Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
+    Droid Sans, Helvetica Neue, sans-serif;
 }
 
 a {
@@ -13,4 +30,29 @@ a {
 
 * {
   box-sizing: border-box;
+}
+
+input {
+  min-width: 300px;
+  padding: 10px;
+  font-size: 28px;
+  line-height: 36px;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  border-radius: 3px;
+  margin: 10px;
+  background-color: #fff;
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.15);
+}
+
+button {
+  cursor: pointer;
+  padding: 10px;
+  font-size: 28px;
+  line-height: 36px;
+  color: #fff;
+  border-radius: 3px;
+  margin: 10px;
+  background-color: #e887d8;
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.15);
 }

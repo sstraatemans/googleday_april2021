@@ -3,6 +3,7 @@ import { useSocket, useLastMessage } from "use-socketio";
 import { RegisterParticipantSocketEvent } from "../../../types/sockets.types";
 import { useGameContextConsumer } from "../../context/GameContext";
 import { socketEmit } from "../../utils/socketEmit";
+import styles from "../../styles/Game.module.css";
 
 const RegisterParticipant = () => {
   const [error, setError] = useState(null);
@@ -14,6 +15,10 @@ const RegisterParticipant = () => {
   const { data: participantRegisteredResponse } = useLastMessage(
     "ParticipantRegistered"
   );
+
+  const onInputChange = () => {
+    setError(null);
+  };
 
   useEffect(() => {
     if (participantRegisteredResponse) {
@@ -48,9 +53,13 @@ const RegisterParticipant = () => {
 
   return (
     <form onSubmit={onSubmit}>
-      <input ref={inputRef} />
-      {error}
+      <input ref={inputRef} onChange={onInputChange} />
       <button>Register</button>
+      {error && (
+        <div>
+          <p className={styles.errorMessage}>{error}</p>
+        </div>
+      )}
     </form>
   );
 };
