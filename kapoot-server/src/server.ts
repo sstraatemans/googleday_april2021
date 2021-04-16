@@ -2,56 +2,70 @@ import * as express from "express";
 import * as socketio from "socket.io";
 import * as path from "path";
 import { Socket } from "socket.io";
+import { NewQuestionSocketEvent } from "../../types/sockets.types";
+interface KapootSocket extends Socket {
+  name?: string;
+}
 
 const app = express();
 app.set("port", process.env.PORT || 8080);
 
 let http = require("http").Server(app);
-let io = require("socket.io")(http);
+let io = new socketio.Server(http);
 
-app.get("/", (req: any, res: any) => {
+app.get("/", (_req, res) => {
   res.sendFile(path.resolve("./index.html"));
 });
 
 let participants: string[] = [];
+let isGameStarted: boolean = false;
+let questions: Array<NewQuestionSocketEvent["response"]> = [
+  {
+    question: "Vraag 1",
+    answers: [
+      {
+        displayValue: "Antwoord 1",
+        id: "1",
+      },
+      {
+        displayValue: "Antwoord 2",
+        id: "2",
+      },
+      {
+        displayValue: "Antwoord 3",
+        id: "3",
+      },
+    ],
+  },
+];
 
-// simple '/' endpoint sending a Hello World
-// response
-app.get("/hello-world", (req: any, res: any) => {
-  res.send("hello world");
-});
-
-io.use((socket: any, next: any) => {
-  const name = socket.handshake.auth.name;
-  console.log('name middleware', name)
-  if (!name) {
-    return next(new Error("invalid name"));
-  }
-  socket.name = name;
-  next();
-});
-
-io.on("connection", (socket: Socket) => {
+io.on("connection", (socket: KapootSocket) => {
   socket.onAny((event, ...args) => {
     console.log(event, args);
   });
 
-  socket.on("RegisterParticipant", (participantName: string) => {
-      let success: boolean = false;
-      if (participants.indexOf(participantName) !== -1) {
-        participants.push(participantName);
-        io.emit('PartipantsUpdated', { participants })
-      }
-    
-      socket.emit('PartipantRegistered', {
-        success,
-    })
-  })
+  socket.on("RegisterParticipant", (participant: string) => {
+    let success: boolean = false;
+    console.log("isGameStarted", isGameStarted);
+
+    if (!isGameStarted && participants.indexOf(participant) == -1) {
+      participants.push(participant);
+      socket.name = participant;
+      success = true;
+      io.emit("ParticipantsUpdated", { participants });
+    }
+
+    socket.emit("ParticipantRegistered", {
+      success,
+    });
+  });
 
   socket.on("GameStarted", () => {
-      console.log('Game has started');
-      io.emit('NewQuestion', { participants })
-  })
+    console.log("Game has started", participants);
+    isGameStarted = true;
+    console.log("questions", questions);
+    io.emit("NewQuestion", questions[0]);
+  });
 });
 
 const server = http.listen(8080, function () {
