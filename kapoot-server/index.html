@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,10 +8,17 @@
   </head>
 
   <body>
-    <button onClick="newParticipant('Henk')">Add new participant Henk</button>
-    <button onClick="newParticipant('Frits')">Add new participant Frits</button>
+    <button onClick="newParticipant('Maurits')">
+      Add new participant Maurits
+    </button>
+    <button onClick="newParticipant('Jan-Willem')">
+      Add new participant Jan-Willem
+    </button>
     <button onClick="startGame()">Start new game</button>
 
+    <button onClick="answerQuestion({answerId: '2'})">
+      Answer first question
+    </button>
     <br />
     <br />
 
@@ -25,25 +31,44 @@
       socket.connect();
 
       const newParticipant = (participantName) => {
-        socket.emit("RegisterParticipant", participantName);
-      }
+        socket.emit("RegisterParticipant", { name: participantName });
+      };
 
       const startGame = () => {
-        socket.emit("StartGame")
-      }
+        socket.emit("StartGame");
+      };
+
+      const answerQuestion = (answerId) => {
+        socket.emit("GiveAnswer", { answerId });
+      };
+
+      socket.on("ParticipantRegistered", function ({ success }) {
+        console.log("ParticipantRegistered", success);
+      });
 
       const resetServer = () => {
         socket.emit("ResetServer");
-      }
+      };
 
-      socket.on("ParticipantRegistered", function ({success}) {
-        console.log('ParticipantRegistered', success);
+      socket.on("ParticipantsUpdated", ({ participants }) => {
+        console.log("ParticipantsUpdated: ", participants);
       });
 
-      socket.on("ParticipantsUpdated", ({participants}) => {
-        console.log("ParticipantsUpdated: ", participants);
-      })
+      socket.on("NewQuestion", (data) => {
+        console.log("NewQuestion: ", data);
+      });
+
+      socket.on(
+        "QuestionCompleted",
+        ({ questionId, validAnswersIds, participants }) => {
+          console.log(
+            "QuestionCompleted: ",
+            questionId,
+            validAnswersIds,
+            participants
+          );
+        }
+      );
     </script>
   </body>
-
 </html>
