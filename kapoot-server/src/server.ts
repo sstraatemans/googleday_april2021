@@ -7,6 +7,7 @@ import {
   RegisterParticipantSocketEvent,
   StartGameSocketEvent,
   UpdateParticipantsSocketEvent,
+  GiveAnswerSocketEvent,
 } from "../../types/sockets.types";
 import { onSocketEvent } from "./handleSocketEvent";
 interface KapootSocket extends Socket {
@@ -49,12 +50,30 @@ let questions: Array<NewQuestionSocketEvent["response"]> = [
     ],
   },
 ];
+let currentQuestion: string;
+
+// let answerTest = [{
+//   question: "Vraag 1",
+//   answers: [
+//     {
+//       participant: "Jan-Willem",
+//       answer: "2",
+//     }
+//   ]
+// }]
+
+let answers: Array<{
+  question: string;
+  answers: Array<{
+    participant: string;
+    answer: string;
+  }>;
+}> = questions.map((question) => ({
+  question: question.question,
+  answers: [],
+}));
 
 io.on("connection", (socket: KapootSocket) => {
-  socket.onAny((event, ...args) => {
-    console.log(event, args);
-  });
-
   onSocketEvent<RegisterParticipantSocketEvent>(
     socket,
     "RegisterParticipant",
@@ -65,6 +84,7 @@ io.on("connection", (socket: KapootSocket) => {
         participants.push(name);
         socket.name = name;
         success = true;
+        io.emit("ParticipantsUpdated", { participants });
       }
 
       socket.emit("ParticipantRegistered", {
@@ -83,6 +103,7 @@ io.on("connection", (socket: KapootSocket) => {
 
   onSocketEvent<StartGameSocketEvent>(socket, "StartGame", () => {
     if (isGameStarted) {
+      console.log("Game already started");
       return;
     }
 
@@ -90,9 +111,25 @@ io.on("connection", (socket: KapootSocket) => {
     io.emit("GameStarted");
 
     setTimeout(() => {
-      console.log("questions", questions);
       io.emit("NewQuestion", questions[0]);
+      currentQuestion = questions[0].question;
     }, 3000);
+  });
+
+  onSocketEvent<GiveAnswerSocketEvent>(socket, "GiveAnswer", ({ answerId }) => {
+    if (!isGameStarted) {
+      console.error("Start a game first!");
+    }
+    console.log("socket.name ", socket.name);
+
+    answers
+      .find((answer) => answer.question === currentQuestion)
+      .answers.push({
+        participant: socket.name,
+        answer: answerId,
+      });
+
+    console.log("Current answers: ", JSON.stringify(answers));
   });
 
   socket.on("ResetServer", () => {
