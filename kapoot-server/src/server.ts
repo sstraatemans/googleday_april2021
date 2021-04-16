@@ -37,9 +37,15 @@ io.on("connection", (socket: Socket) => {
   });
 
   socket.on("RegisterParticipant", (participantName: string) => {
-    participants.push(participantName);
-    // TODO: filter double names
-    io.emit('PartipantsUpdated', { participants })
+      let success: boolean = false;
+      if (participants.indexOf(participantName) !== -1) {
+        participants.push(participantName);
+        io.emit('PartipantsUpdated', { participants })
+      }
+    
+      socket.emit('PartipantRegistered', {
+        success,
+    })
   })
 
   socket.on("GameStarted", () => {

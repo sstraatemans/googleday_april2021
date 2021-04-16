@@ -5,6 +5,13 @@ export interface ParticipantsUpdatedSocketEvent {
     };
   }
 
+export interface PartipantRegisteredSocketEvent {
+    eventName: 'PartipantRegistered';
+    response: {
+      success: boolean;
+    };
+  }
+
   export interface RegisterParticipantSocketEvent {
     eventName: 'RegisterParticipant';
     body: {
@@ -63,6 +70,7 @@ export interface ParticipantsUpdatedSocketEvent {
 
   export type SocketEvent =
   | ParticipantsUpdatedSocketEvent
+  | PartipantRegisteredSocketEvent
   | RegisterParticipantSocketEvent
   | NewQuestionSocketEvent
   | GameStartedSocketEvent
