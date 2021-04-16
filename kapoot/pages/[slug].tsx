@@ -1,9 +1,12 @@
-import React from 'react';
-import { SocketIOProvider } from 'use-socketio';
-import GameController from '../components/GameController';
-import { GameContextProvider, INITIAL_GAME_STATE } from '../context/GameContext';
-import styles from '../styles/Home.module.css';
-import { SOCKET_URL } from '../utils/constants';
+import React from "react";
+import { SocketIOProvider } from "use-socketio";
+import GameController from "../components/GameController";
+import {
+  GameContextProvider,
+  INITIAL_GAME_STATE,
+} from "../context/GameContext";
+import styles from "../styles/Home.module.css";
+import { SOCKET_URL } from "../utils/constants";
 
 export default function Slug() {
   return (
