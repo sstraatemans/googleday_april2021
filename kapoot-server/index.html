@@ -10,18 +10,35 @@
 
   <body>
     <button onClick="sendMsg()">Hit Me</button>
+    <button onClick="newParticipant('Henk')">Add new participant Henk</button>
+    <button onClick="startGame()">Start new game</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
       const socket = io("http://localhost:3000");
 
-      function sendMsg() {
+      socket.auth = { username: 'Frits' }
+      socket.connect();
+
+      const sendMsg = () => {
         socket.emit("message", "HELLO WORLDDD");
+      }
+
+      const newParticipant = (participantName) => {
+        socket.emit("RegisterParticipant", participantName);
+      }
+
+      const startGame = () => {
+        socket.emit("GameStarted")
       }
 
       socket.on("message", function (data) {
         console.log(data);
       });
+
+      socket.on("PartipantsUpdated", (data) => {
+        console.log("PartipantsUpdated: ", data.participants);
+      })
     </script>
   </body>
 
