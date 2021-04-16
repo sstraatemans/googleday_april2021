@@ -1,5 +1,5 @@
 export interface ParticipantsUpdatedSocketEvent {
-  eventName: "ParticipantsUpdated";
+  eventName: 'ParticipantsUpdated';
   body: null;
   response: {
     participants: string[];
@@ -7,13 +7,13 @@ export interface ParticipantsUpdatedSocketEvent {
 }
 
 export interface UpdateParticipantsSocketEvent {
-  eventName: "UpdateParticipants";
+  eventName: 'UpdateParticipants';
   body: null;
   response: null;
 }
 
 export interface ParticipantRegisteredSocketEvent {
-  eventName: "ParticipantRegistered";
+  eventName: 'ParticipantRegistered';
   body: null;
   response: {
     success: boolean;
@@ -21,7 +21,7 @@ export interface ParticipantRegisteredSocketEvent {
 }
 
 export interface RegisterParticipantSocketEvent {
-  eventName: "RegisterParticipant";
+  eventName: 'RegisterParticipant';
   body: {
     name: string;
   };
@@ -29,7 +29,7 @@ export interface RegisterParticipantSocketEvent {
 }
 
 export interface GameStartedSocketEvent {
-  eventName: "GameStarted";
+  eventName: 'GameStarted';
   body: null;
   response: {
     numberOfQuestions: number;
@@ -37,19 +37,19 @@ export interface GameStartedSocketEvent {
 }
 
 export interface GameEndedSocketEvent {
-  eventName: "GameEnded";
+  eventName: 'GameEnded';
   body: null;
   response: null;
 }
 
 export interface StartGameSocketEvent {
-  eventName: "StartGame";
+  eventName: 'StartGame';
   body: null;
   response: null;
 }
 
 export interface GiveAnswerSocketEvent {
-  eventName: "GiveAnswer";
+  eventName: 'GiveAnswer';
   body: {
     answerId: string;
   };
@@ -57,7 +57,7 @@ export interface GiveAnswerSocketEvent {
 }
 
 export interface QuestionCompletedSocketEvent {
-  eventName: "QuestionCompleted";
+  eventName: 'QuestionCompleted';
   body: null;
   response: {
     questionId: string;
@@ -66,20 +66,21 @@ export interface QuestionCompletedSocketEvent {
   };
 }
 
+export interface Question {
+  question: string;
+  answers: Array<{
+    id: string;
+    displayValue: string;
+  }>;
+}
 export interface NewQuestionSocketEvent {
-  eventName: "NewQuestion";
+  eventName: 'NewQuestion';
   body: null;
-  response: {
-    question: string;
-    answers: Array<{
-      id: string;
-      displayValue: string;
-    }>;
-  };
+  response: Question;
 }
 
 export interface FinalScoreSocketEvent {
-  eventName: "FinalScore";
+  eventName: 'FinalScore';
   body: null;
   response: {
     participants: Array<{ name: string; score: number }>;
