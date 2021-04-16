@@ -57,6 +57,18 @@
       socket.on("NewQuestion", (data) => {
         console.log("NewQuestion: ", data);
       });
+
+      socket.on(
+        "QuestionCompleted",
+        ({ questionId, validAnswersIds, participants }) => {
+          console.log(
+            "QuestionCompleted: ",
+            questionId,
+            validAnswersIds,
+            participants
+          );
+        }
+      );
     </script>
   </body>
 </html>

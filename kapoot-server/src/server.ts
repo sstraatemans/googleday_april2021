@@ -8,6 +8,7 @@ import {
   StartGameSocketEvent,
   UpdateParticipantsSocketEvent,
   GiveAnswerSocketEvent,
+  QuestionCompletedSocketEvent,
 } from "../../types/sockets.types";
 import { onSocketEvent } from "./handleSocketEvent";
 interface KapootSocket extends Socket {
@@ -31,9 +32,12 @@ app.get("/", (_req, res) => {
 
 let participants: string[] = [];
 let isGameStarted: boolean = false;
-let questions: Array<NewQuestionSocketEvent["response"]> = [
+let questions: Array<
+  NewQuestionSocketEvent["response"] & { validAnswers: string[] }
+> = [
   {
     question: "Vraag 1",
+    validAnswers: ["3"],
     answers: [
       {
         displayValue: "Antwoord 1",
@@ -111,8 +115,9 @@ io.on("connection", (socket: KapootSocket) => {
     io.emit("GameStarted");
 
     setTimeout(() => {
-      io.emit("NewQuestion", questions[0]);
-      currentQuestion = questions[0].question;
+      const { question, answers } = questions[0];
+      io.emit("NewQuestion", { question, answers });
+      currentQuestion = question;
     }, 3000);
   });
 
@@ -129,7 +134,21 @@ io.on("connection", (socket: KapootSocket) => {
         answer: answerId,
       });
 
-    console.log("Current answers: ", JSON.stringify(answers));
+    if (
+      answers.find((answer) => answer.question === currentQuestion).answers
+        .length === participants.length
+    ) {
+      const response: QuestionCompletedSocketEvent["response"] = {
+        questionId: currentQuestion,
+        validAnswersIds: questions.find((q) => q.question === currentQuestion)
+          .validAnswers,
+        // participants: answers.map(answer => ({
+        //   name:
+        //   score:
+        // }))
+      };
+      io.emit("QuestionCompleted");
+    }
   });
 
   socket.on("ResetServer", () => {
