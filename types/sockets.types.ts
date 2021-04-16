@@ -6,7 +6,7 @@ export interface ParticipantsUpdatedSocketEvent {
   }
 
 export interface PartipantRegisteredSocketEvent {
-    eventName: 'PartipantRegistered';
+    eventName: 'ParticipantRegistered';
     response: {
       success: boolean;
     };
