@@ -2,7 +2,12 @@ import * as express from "express";
 import * as socketio from "socket.io";
 import * as path from "path";
 import { Socket } from "socket.io";
-import { NewQuestionSocketEvent, RegisterParticipantSocketEvent, StartGameSocketEvent, UpdateParticipantsSocketEvent } from "../../types/sockets.types";
+import {
+  NewQuestionSocketEvent,
+  RegisterParticipantSocketEvent,
+  StartGameSocketEvent,
+  UpdateParticipantsSocketEvent,
+} from "../../types/sockets.types";
 import { onSocketEvent } from "./handleSocketEvent";
 interface KapootSocket extends Socket {
   name?: string;
@@ -50,23 +55,31 @@ io.on("connection", (socket: KapootSocket) => {
     console.log(event, args);
   });
 
-  onSocketEvent<RegisterParticipantSocketEvent>(socket, "RegisterParticipant", ({ name }) => {
-    let success: boolean = false;
+  onSocketEvent<RegisterParticipantSocketEvent>(
+    socket,
+    "RegisterParticipant",
+    ({ name }) => {
+      let success: boolean = false;
 
-    if (!isGameStarted && participants.indexOf(name) == -1) {
-      participants.push(name);
-      socket.name = name;
-      success = true;
+      if (!isGameStarted && participants.indexOf(name) == -1) {
+        participants.push(name);
+        socket.name = name;
+        success = true;
+      }
+
+      socket.emit("ParticipantRegistered", {
+        success,
+      });
     }
+  );
 
-    socket.emit("ParticipantRegistered", {
-      success,
-    });
-  });
-
-  onSocketEvent<UpdateParticipantsSocketEvent>(socket, "UpdateParticipants", () => {
-    io.emit("ParticipantsUpdated", { participants });
-  });
+  onSocketEvent<UpdateParticipantsSocketEvent>(
+    socket,
+    "UpdateParticipants",
+    () => {
+      io.emit("ParticipantsUpdated", { participants });
+    }
+  );
 
   onSocketEvent<StartGameSocketEvent>(socket, "StartGame", () => {
     if (isGameStarted) {
@@ -74,11 +87,18 @@ io.on("connection", (socket: KapootSocket) => {
     }
 
     isGameStarted = true;
+    io.emit("GameStarted");
 
     setTimeout(() => {
       console.log("questions", questions);
       io.emit("NewQuestion", questions[0]);
     }, 3000);
+  });
+
+  socket.on("ResetServer", () => {
+    isGameStarted = false;
+    participants = [];
+    io.emit("GameEnded");
   });
 });
 

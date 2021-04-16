@@ -13,6 +13,11 @@
     <button onClick="newParticipant('Frits')">Add new participant Frits</button>
     <button onClick="startGame()">Start new game</button>
 
+    <br />
+    <br />
+
+    <button onClick="resetServer()">Reset server</button>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
       const socket = io("http://localhost:8080");
@@ -25,6 +30,10 @@
 
       const startGame = () => {
         socket.emit("StartGame")
+      }
+
+      const resetServer = () => {
+        socket.emit("ResetServer");
       }
 
       socket.on("ParticipantRegistered", function ({success}) {
