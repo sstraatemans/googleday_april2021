@@ -11,7 +11,12 @@ const app = express();
 app.set("port", process.env.PORT || 8080);
 
 let http = require("http").Server(app);
-let io = new socketio.Server(http);
+let io = new socketio.Server(http, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+  },
+});
 
 app.get("/", (_req, res) => {
   res.sendFile(path.resolve("./index.html"));
