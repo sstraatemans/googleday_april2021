@@ -1,13 +1,14 @@
-import React, { FC, useState } from 'react';
-import { useSocket } from 'use-socketio';
+import React, { FC, useState } from "react";
+import { useSocket } from "use-socketio";
 import {
   GiveAnswerSocketEvent,
   NewQuestionSocketEvent,
   Question,
-} from '../../../types/sockets.types';
-import { socketEmit } from '../../utils/socketEmit';
-import { useLastMessage } from '../../utils/useLastMessage';
-import Answer from '../Answer';
+} from "../../../types/sockets.types";
+import { socketEmit } from "../../utils/socketEmit";
+import { useLastMessage } from "../../utils/useLastMessage";
+import Answer from "../Answer";
+import styles from "../../styles/Game.module.css";
 
 interface IQuestion {}
 
@@ -16,19 +17,21 @@ const QuestionController: FC = () => {
   const [answerGiven, setAnswerGiven] = useState<string | undefined>();
   const { socket } = useSocket();
 
-  useLastMessage<NewQuestionSocketEvent>('NewQuestion', (data) => {
+  useLastMessage<NewQuestionSocketEvent>("NewQuestion", (data) => {
     setQuestion(data.value);
   });
 
   const answerQuestion = (id: string) => {
     setAnswerGiven(id);
-    socketEmit<GiveAnswerSocketEvent>(socket, 'GiveAnswer', { answerId: answerGiven });
+    socketEmit<GiveAnswerSocketEvent>(socket, "GiveAnswer", {
+      answerId: answerGiven,
+    });
   };
 
   if (!question) return <div>waiting for question</div>;
   return (
     <div>
-      <h1>{question.question}</h1>
+      <h1 className={styles.pageheader}>{question.question}</h1>
 
       {question.answers.map((answer) => (
         <Answer
@@ -37,6 +40,7 @@ const QuestionController: FC = () => {
           key={answer.id}
           answerGiven={answer.id === answerGiven}
           onClick={answerQuestion}
+          disabled={!!answerGiven}
         />
       ))}
     </div>
