@@ -66,15 +66,17 @@ export interface QuestionCompletedSocketEvent {
   };
 }
 
+export interface Question {
+  question: string;
+  answers: Array<{
+    id: string;
+    displayValue: string;
+  }>
+}
 export interface NewQuestionSocketEvent {
   eventName: "NewQuestion";
   body: null;
-  response: {
-    question: string;
-    answers: Array<{
-      id: string;
-      displayValue: string;
-    }>;
+  response: Question;
   };
 }
 
