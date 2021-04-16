@@ -22,12 +22,12 @@ app.get("/hello-world", (req: any, res: any) => {
 });
 
 io.use((socket: any, next: any) => {
-  const username = socket.handshake.auth.username;
-  console.log('username middleware', username)
-  if (!username) {
-    return next(new Error("invalid username"));
+  const name = socket.handshake.auth.name;
+  console.log('name middleware', name)
+  if (!name) {
+    return next(new Error("invalid name"));
   }
-  socket.username = username;
+  socket.name = name;
   next();
 });
 
@@ -48,7 +48,6 @@ io.on("connection", (socket: Socket) => {
   })
 });
 
-// start our simple server up on localhost:3000
-const server = http.listen(3000, function () {
-  console.log("listening on *:3000");
+const server = http.listen(8080, function () {
+  console.log("listening on *:8080");
 });
