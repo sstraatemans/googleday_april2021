@@ -2,7 +2,13 @@ import * as express from "express";
 import * as socketio from "socket.io";
 import * as path from "path";
 import { Socket } from "socket.io";
-import { NewQuestionSocketEvent, RegisterParticipantSocketEvent, StartGameSocketEvent, UpdateParticipantsSocketEvent } from "../../types/sockets.types";
+import {
+  NewQuestionSocketEvent,
+  RegisterParticipantSocketEvent,
+  StartGameSocketEvent,
+  UpdateParticipantsSocketEvent,
+  GiveAnswerSocketEvent,
+} from "../../types/sockets.types";
 import { onSocketEvent } from "./handleSocketEvent";
 interface KapootSocket extends Socket {
   name?: string;
@@ -44,41 +50,85 @@ let questions: Array<NewQuestionSocketEvent["response"]> = [
     ],
   },
 ];
+let currentQuestion: string;
+
+// let answerTest = [{
+//   question: "Vraag 1",
+//   answers: [
+//     {
+//       participant: "Jan-Willem",
+//       answer: "2",
+//     }
+//   ]
+// }]
+
+let answers: Array<{
+  question: string;
+  answers: Array<{
+    participant: string;
+    answer: string;
+  }>;
+}> = questions.map((question) => ({
+  question: question.question,
+  answers: [],
+}));
 
 io.on("connection", (socket: KapootSocket) => {
-  socket.onAny((event, ...args) => {
-    console.log(event, args);
-  });
+  onSocketEvent<RegisterParticipantSocketEvent>(
+    socket,
+    "RegisterParticipant",
+    ({ name }) => {
+      let success: boolean = false;
 
-  onSocketEvent<RegisterParticipantSocketEvent>(socket, "RegisterParticipant", ({ name }) => {
-    let success: boolean = false;
+      if (!isGameStarted && participants.indexOf(name) == -1) {
+        participants.push(name);
+        socket.name = name;
+        success = true;
+        io.emit("ParticipantsUpdated", { participants });
+      }
 
-    if (!isGameStarted && participants.indexOf(name) == -1) {
-      participants.push(name);
-      socket.name = name;
-      success = true;
+      socket.emit("ParticipantRegistered", {
+        success,
+      });
     }
+  );
 
-    socket.emit("ParticipantRegistered", {
-      success,
-    });
-  });
-
-  onSocketEvent<UpdateParticipantsSocketEvent>(socket, "UpdateParticipants", () => {
-    io.emit("ParticipantsUpdated", { participants });
-  });
+  onSocketEvent<UpdateParticipantsSocketEvent>(
+    socket,
+    "UpdateParticipants",
+    () => {
+      //   io.emit("ParticipantsUpdated", { participants });
+    }
+  );
 
   onSocketEvent<StartGameSocketEvent>(socket, "StartGame", () => {
     if (isGameStarted) {
+      console.log("Game already started");
       return;
     }
 
     isGameStarted = true;
 
     setTimeout(() => {
-      console.log("questions", questions);
       io.emit("NewQuestion", questions[0]);
+      currentQuestion = questions[0].question;
     }, 3000);
+  });
+
+  onSocketEvent<GiveAnswerSocketEvent>(socket, "GiveAnswer", ({ answerId }) => {
+    if (!isGameStarted) {
+      console.error("Start a game first!");
+    }
+    console.log("socket.name ", socket.name);
+
+    answers
+      .find((answer) => answer.question === currentQuestion)
+      .answers.push({
+        participant: socket.name,
+        answer: answerId,
+      });
+
+    console.log("Current answers: ", JSON.stringify(answers));
   });
 });
 
