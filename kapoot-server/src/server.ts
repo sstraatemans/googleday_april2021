@@ -52,7 +52,6 @@ io.on("connection", (socket: KapootSocket) => {
 
   onSocketEvent<RegisterParticipantSocketEvent>(socket, "RegisterParticipant", ({ name }) => {
     let success: boolean = false;
-    console.log("[RegisterParticipant]", name);
 
     if (!isGameStarted && participants.indexOf(name) == -1) {
       participants.push(name);
