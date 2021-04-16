@@ -19,6 +19,10 @@
     <button onClick="answerQuestion({answerId: '2'})">
       Answer first question
     </button>
+    <br />
+    <br />
+
+    <button onClick="resetServer()">Reset server</button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
     <script>
@@ -27,7 +31,7 @@
       socket.connect();
 
       const newParticipant = (participantName) => {
-        socket.emit("RegisterParticipant", {name: participantName});
+        socket.emit("RegisterParticipant", { name: participantName });
       };
 
       const startGame = () => {
@@ -41,6 +45,10 @@
       socket.on("ParticipantRegistered", function ({ success }) {
         console.log("ParticipantRegistered", success);
       });
+
+      const resetServer = () => {
+        socket.emit("ResetServer");
+      };
 
       socket.on("ParticipantsUpdated", ({ participants }) => {
         console.log("ParticipantsUpdated: ", participants);

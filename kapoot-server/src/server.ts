@@ -97,7 +97,7 @@ io.on("connection", (socket: KapootSocket) => {
     socket,
     "UpdateParticipants",
     () => {
-      //   io.emit("ParticipantsUpdated", { participants });
+      io.emit("ParticipantsUpdated", { participants });
     }
   );
 
@@ -108,6 +108,7 @@ io.on("connection", (socket: KapootSocket) => {
     }
 
     isGameStarted = true;
+    io.emit("GameStarted");
 
     setTimeout(() => {
       io.emit("NewQuestion", questions[0]);
@@ -129,6 +130,12 @@ io.on("connection", (socket: KapootSocket) => {
       });
 
     console.log("Current answers: ", JSON.stringify(answers));
+  });
+
+  socket.on("ResetServer", () => {
+    isGameStarted = false;
+    participants = [];
+    io.emit("GameEnded");
   });
 });
 

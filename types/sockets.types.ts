@@ -36,6 +36,12 @@ export interface GameStartedSocketEvent {
   };
 }
 
+export interface GameEndedSocketEvent {
+  eventName: "GameEnded";
+  body: null;
+  response: null;
+}
+
 export interface StartGameSocketEvent {
   eventName: "StartGame";
   body: null;
@@ -86,6 +92,7 @@ export type SocketEvent =
   | RegisterParticipantSocketEvent
   | UpdateParticipantsSocketEvent
   | NewQuestionSocketEvent
+  | GameEndedSocketEvent
   | GameStartedSocketEvent
   | StartGameSocketEvent
   | GiveAnswerSocketEvent
