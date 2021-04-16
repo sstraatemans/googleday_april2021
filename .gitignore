@@ -33,3 +33,7 @@ yarn-error.log*
 
 # vercel
 .vercel
+
+# kapoot-server
+kapoot-server/node_modules
+kapoot-server/dist
