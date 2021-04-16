@@ -28,7 +28,13 @@ const QuestionController: FC = () => {
     });
   };
 
-  if (!question) return <div>waiting for question</div>;
+  if (!question) {
+    return (
+      <div>
+        <h1 className={styles.pageheader}>Waiting for question..</h1>
+      </div>
+    );
+  }
   return (
     <div>
       <h1 className={styles.pageheader}>{question.question}</h1>
