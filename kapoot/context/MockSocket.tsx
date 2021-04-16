@@ -1,14 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
 export interface ParticipantsUpdatedSocketEvent {
-  eventName: "ParticipantsUpdated";
+  eventName: 'ParticipantsUpdated';
   response: {
     participants: string[];
   };
 }
 
-export interface NewQuestion {
-  eventName: "NewQuestion";
+export interface GameStartedSocketEvent {
+  eventName: 'GameStarted';
+  response: {
+    numberOfQuestions: number;
+  };
+}
+
+export interface NewQuestionSocketEvent {
+  eventName: 'NewQuestion';
   response: {
     question: string;
     answers: Array<{
@@ -18,17 +25,44 @@ export interface NewQuestion {
   };
 }
 
-export type SocketEvent = ParticipantsUpdatedSocketEvent | NewQuestion;
+export type SocketEvent =
+  | ParticipantsUpdatedSocketEvent
+  | NewQuestionSocketEvent
+  | GameStartedSocketEvent;
 
-export function useLastMessage<T extends SocketEvent>(
-  eventName: T["eventName"]
-) {
-  const [state, setState] = useState<T["response"] | undefined>(undefined);
+export function useLastMessage<T extends SocketEvent>(eventName: T['eventName']) {
+  const [state, setState] = useState<T['response'] | undefined>(undefined);
 
   useEffect(() => {
     const EVENT_NAME = `MOCK_${eventName}`;
     const onEvent = () => {
-      setState(({ participants: ["Jaap", "Jan"] } as unknown) as T["response"]);
+      let response;
+      switch (eventName) {
+        case 'ParticipantsUpdated':
+          response = { participants: ['Jaap', 'Jan'] };
+          break;
+        case 'GameStarted':
+          response = {
+            numberOfQuestions: 5,
+          };
+          break;
+        case 'NewQuestion':
+          response = {
+            question: 'What is de hoofdstad van Spanje?',
+            answers: [
+              {
+                id: 'madrid',
+                displayValue: 'Madrid',
+              },
+              {
+                id: 'Vienna',
+                displayValue: 'Vienna',
+              },
+            ],
+          };
+      }
+
+      setState((response as unknown) as T['response']);
     };
 
     window.addEventListener(EVENT_NAME, onEvent);
@@ -38,5 +72,7 @@ export function useLastMessage<T extends SocketEvent>(
     };
   }, []);
 
-  return state;
+  return {
+    data: state,
+  };
 }
