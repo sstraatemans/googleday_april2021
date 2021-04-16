@@ -29,6 +29,9 @@ name: PartipantsUpdated
 }
 ```
 
+1c[admin->server] start game
+name: StartGame
+
 2[client<-server] game start
 name: GameStarted
 
